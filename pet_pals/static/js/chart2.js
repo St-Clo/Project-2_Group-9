@@ -1,4 +1,4 @@
-var url = "worldwide_coffee_market.csv";
+const url = "/api/coffee";
 var Country_Code = [];
 var Country_Name = [];
 var Market_Year = [];
@@ -19,25 +19,30 @@ var Soluble_consumption = [];
 var Total_consumption = [];
 var country_ids = [];
 var table_data = [];
+var total_rows = 0
 
+d3.json(url).then(function (csvData) {
 
-d3.csv(url).then(function (csvData) {
+    table_data = csvData[0];
+    console.log(table_data);
+    total_rows = table_data.Country_Name.length;
+    console.log(total_rows);
 
-    table_data = csvData;
     var lines_legend = [];
     var lines_value = [[], [], [], []];
     var lines_year = [];
     //ready data to variable arrays
-    csvData.forEach((e, index) => {
+
+    for (var j = 0; j < total_rows; j++) {
         var duplicate = 0;
         //get unique values of country.
-        if (index == 0) {
-            country_ids.push(e.Country_Name);
+        if (j == 0) {
+            country_ids.push(table_data.Country_Name[j]);
         }
         else {
             duplicate = 0;
             for (var i = 0; i < country_ids.length; i++) {
-                if (e.Country_Name == country_ids[i]) {
+                if (table_data.Country_Name[j] == country_ids[i]) {
                     duplicate = 1;
                     break;
                 }
@@ -46,19 +51,21 @@ d3.csv(url).then(function (csvData) {
                 }
             };
             if (duplicate == 0) {
-                country_ids.push(e.Country_Name);
+                country_ids.push(table_data.Country_Name[j]);
             }
         };
         //get default values
-        if (e.Country_Name == country_ids[0]) {
-            lines_value[0].push(e.Arabica_Production);
-            lines_value[1].push(e.Robusta_Production);
-            lines_value[2].push(e.Other_Production);
-            lines_value[3].push(e.Total_Production);
-            lines_year.push(e.Market_Year);
-        }
-
-    });
+        if (table_data.Country_Name[j] == country_ids[0]) {
+            lines_value[0].push(table_data.Arabica_Production[j]);
+            lines_value[1].push(table_data.Robusta_Production[j]);
+            lines_value[2].push(table_data.Other_Production[j]);
+            lines_value[3].push(table_data.Total_Production[j]);
+            lines_year.push(table_data.Market_Year[j]);
+        };
+    };
+    console.log(country_ids);
+    console.log(lines_year);
+    console.log(lines_value[0]);
 
     //populate countries to drop down box
     var dropDownOption = d3.select("#selDataset").selectAll("option").data(country_ids);
@@ -122,45 +129,45 @@ function optionChanged() {
     var lines_year = [];
 
     //get updated values
-    table_data.forEach((e, index) => {
-        if (e.Country_Name == country) {
+    for (var j = 0; j < total_rows; j++) {
+        if (table_data.Country_Name[j] == country) {
             switch (param) {
                 case "Consumption":
-                    lines_value[0].push(e.Roast_Ground_consumption);
-                    lines_value[1].push(e.Soluble_consumption);
-                    lines_value[2].push(e.Total_consumption);
-                    lines_year.push(e.Market_Year);
+                    lines_value[0].push(table_data.Roast_Ground_consumption[j]);
+                    lines_value[1].push(table_data.Soluble_consumption[j]);
+                    lines_value[2].push(table_data.Total_consumption[j]);
+                    lines_year.push(table_data.Market_Year[j]);
                     lines_legend = ["Roast Ground consumption", "Soluble consumption", "Total consumption", ""];
                     break;
                 case "Import":
-                    lines_value[0].push(e.Bean_Imports);
-                    lines_value[1].push(e.Roast_Ground_Imports);
-                    lines_value[2].push(e.Soluble_Imports);
-                    lines_value[3].push(e.Total_Imports);
-                    lines_year.push(e.Market_Year);
+                    lines_value[0].push(table_data.Bean_Imports[j]);
+                    lines_value[1].push(table_data.Roast_Ground_Imports[j]);
+                    lines_value[2].push(table_data.Soluble_Imports[j]);
+                    lines_value[3].push(table_data.Total_Imports[j]);
+                    lines_year.push(table_data.Market_Year[j]);
                     lines_legend = ["Bean Imports", "Roast Ground Imports", "Soluble Imports", "Total Imports"];
                     break;
                 case "Export":
-                    lines_value[0].push(e.Bean_Exports);
-                    lines_value[1].push(e.Roast_Ground_Exports);
-                    lines_value[2].push(e.Soluble_Exports);
-                    lines_value[3].push(e.Total_Exports);
-                    lines_year.push(e.Market_Year);
+                    lines_value[0].push(table_data.Bean_Exports[j]);
+                    lines_value[1].push(table_data.Roast_Ground_Exports[j]);
+                    lines_value[2].push(table_data.Soluble_Exports[j]);
+                    lines_value[3].push(table_data.Total_Exports[j]);
+                    lines_year.push(table_data.Market_Year[j]);
                     lines_legend = ["Bean Exports", "Roast Ground Exports", "Soluble Exports", "Total Exports"];
                     break;
                 default:
-                    lines_value[0].push(e.Arabica_Production);
-                    lines_value[1].push(e.Robusta_Production);
-                    lines_value[2].push(e.Other_Production);
-                    lines_value[3].push(e.Total_Production);
-                    lines_year.push(e.Market_Year);
+                    lines_value[0].push(table_data.Arabica_Production[j]);
+                    lines_value[1].push(table_data.Robusta_Production[j]);
+                    lines_value[2].push(table_data.Other_Production[j]);
+                    lines_value[3].push(table_data.Total_Production[j]);
+                    lines_year.push(table_data.Market_Year[j]);
                     lines_legend = ["Arabica Production", "Robusta Production", "Other Production", "Total Production"];
                     break;
             }
 
         }
-    });
-    //draw default lines
+    };
+    //redraw
     var trace0 = {
         x: lines_year,
         y: lines_value[0],
@@ -192,7 +199,7 @@ function optionChanged() {
     };
     //redraw plot bar
     Plotly.react("line", data, layout);
-}
+};
 
 // update per parameters chosen
 d3.selectAll('input[name="params"]').on("change", radioChanged);
@@ -206,45 +213,46 @@ function radioChanged() {
     var lines_year = [];
 
     //get updated values
-    table_data.forEach((e, index) => {
-        if (e.Country_Name == country) {
+    for (var j = 0; j < total_rows; j++) {
+        if (table_data.Country_Name[j] == country) {
             switch (param) {
                 case "Consumption":
-                    lines_value[0].push(e.Roast_Ground_consumption);
-                    lines_value[1].push(e.Soluble_consumption);
-                    lines_value[2].push(e.Total_consumption);
-                    lines_year.push(e.Market_Year);
+                    lines_value[0].push(table_data.Roast_Ground_consumption[j]);
+                    lines_value[1].push(table_data.Soluble_consumption[j]);
+                    lines_value[2].push(table_data.Total_consumption[j]);
+                    lines_year.push(table_data.Market_Year[j]);
                     lines_legend = ["Roast Ground consumption", "Soluble consumption", "Total consumption", ""];
                     break;
                 case "Import":
-                    lines_value[0].push(e.Bean_Imports);
-                    lines_value[1].push(e.Roast_Ground_Imports);
-                    lines_value[2].push(e.Soluble_Imports);
-                    lines_value[3].push(e.Total_Imports);
-                    lines_year.push(e.Market_Year);
+                    lines_value[0].push(table_data.Bean_Imports[j]);
+                    lines_value[1].push(table_data.Roast_Ground_Imports[j]);
+                    lines_value[2].push(table_data.Soluble_Imports[j]);
+                    lines_value[3].push(table_data.Total_Imports[j]);
+                    lines_year.push(table_data.Market_Year[j]);
                     lines_legend = ["Bean Imports", "Roast Ground Imports", "Soluble Imports", "Total Imports"];
                     break;
                 case "Export":
-                    lines_value[0].push(e.Bean_Exports);
-                    lines_value[1].push(e.Roast_Ground_Exports);
-                    lines_value[2].push(e.Soluble_Exports);
-                    lines_value[3].push(e.Total_Exports);
-                    lines_year.push(e.Market_Year);
+                    lines_value[0].push(table_data.Bean_Exports[j]);
+                    lines_value[1].push(table_data.Roast_Ground_Exports[j]);
+                    lines_value[2].push(table_data.Soluble_Exports[j]);
+                    lines_value[3].push(table_data.Total_Exports[j]);
+                    lines_year.push(table_data.Market_Year[j]);
                     lines_legend = ["Bean Exports", "Roast Ground Exports", "Soluble Exports", "Total Exports"];
                     break;
                 default:
-                    lines_value[0].push(e.Arabica_Production);
-                    lines_value[1].push(e.Robusta_Production);
-                    lines_value[2].push(e.Other_Production);
-                    lines_value[3].push(e.Total_Production);
-                    lines_year.push(e.Market_Year);
+                    lines_value[0].push(table_data.Arabica_Production[j]);
+                    lines_value[1].push(table_data.Robusta_Production[j]);
+                    lines_value[2].push(table_data.Other_Production[j]);
+                    lines_value[3].push(table_data.Total_Production[j]);
+                    lines_year.push(table_data.Market_Year[j]);
                     lines_legend = ["Arabica Production", "Robusta Production", "Other Production", "Total Production"];
                     break;
             }
 
         }
-    });
-    //draw default lines
+    };
+
+    //redraw
     var trace0 = {
         x: lines_year,
         y: lines_value[0],
@@ -276,4 +284,4 @@ function radioChanged() {
     };
     //redraw plot bar
     Plotly.react("line", data, layout);
-}
+};
