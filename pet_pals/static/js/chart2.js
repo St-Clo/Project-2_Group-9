@@ -31,8 +31,6 @@ d3.json(url).then(function (csvData) {
     var bar_country_sorted = [];
     var cat = cat_ids[0];
     //ready data to variable arrays
-    console.log(table_data);
-
     for (var j = 0; j < total_rows; j++) {
         var duplicate = 0;
         //get unique values of country.
@@ -90,8 +88,6 @@ d3.json(url).then(function (csvData) {
 
 
     };
-    console.log(year_ids);
-    console.log(bar_value);
 
     //sort bar value 
     // Create items array
@@ -257,7 +253,6 @@ function optionChanged() {
     var lines_legend = [];
     var lines_value = [[], [], [], []];
     var lines_year = [];
-    console.log(country);
     //get updated values
     for (var j = 0; j < total_rows; j++) {
         if (table_data.Country_Name[j] == country) {
