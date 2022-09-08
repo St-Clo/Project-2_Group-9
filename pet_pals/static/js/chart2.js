@@ -1,32 +1,15 @@
 const url = "/api/coffee";
-var Country_Code = [];
-var Country_Name = [];
-var Market_Year = [];
-var Arabica_Production = [];
-var Robusta_Production = [];
-var Other_Production = [];
-var Total_Production = [];
-var Bean_Exports = [];
-var Roast_Ground_Exports = [];
-var Soluble_Exports = [];
-var Total_Exports = [];
-var Bean_Imports = [];
-var Roast_Ground_Imports = [];
-var Soluble_Imports = [];
-var Total_Imports = [];
-var Roast_Ground_consumption = [];
-var Soluble_consumption = [];
-var Total_consumption = [];
+
 var country_ids = [];
 var table_data = [];
-var total_rows = 0
+var total_rows = 0;
+var myChart;
+var ctx = document.getElementById('lineChart');
 
 d3.json(url).then(function (csvData) {
 
     table_data = csvData[0];
-    console.log(table_data);
     total_rows = table_data.Country_Name.length;
-    console.log(total_rows);
 
     var lines_legend = [];
     var lines_value = [[], [], [], []];
@@ -63,9 +46,6 @@ d3.json(url).then(function (csvData) {
             lines_year.push(table_data.Market_Year[j]);
         };
     };
-    console.log(country_ids);
-    console.log(lines_year);
-    console.log(lines_value[0]);
 
     //populate countries to drop down box
     var dropDownOption = d3.select("#selDataset").selectAll("option").data(country_ids);
@@ -83,37 +63,82 @@ d3.json(url).then(function (csvData) {
     lines_legend = ["Arabica Production", "Robusta Production", "Other Production", "Total Production"];
 
     //draw default lines
-    var trace0 = {
-        x: lines_year,
-        y: lines_value[0],
-        name: lines_legend[0],
-        type: "scatter"
+    
+    var labels = lines_year;
+    var data = {
+        labels: labels,
+        datasets: [{
+            label: lines_legend[0],
+            data: lines_value[0],
+            fill: false,
+            borderColor: 'rgb(255, 60, 60)',
+            tension: 0.1
+        },
+        {
+            label: lines_legend[1],
+            data: lines_value[1],
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+        },
+        {
+            label: lines_legend[2],
+            data: lines_value[2],
+            fill: false,
+            borderColor: 'rgb(75, 192, 45)',
+            tension: 0.1
+        },
+        {
+            label: lines_legend[3],
+            data: lines_value[3],
+            fill: false,
+            borderColor: 'rgb(150, 120, 240)',
+            tension: 0.1
+        }
+        ]
     };
-    var trace1 = {
-        x: lines_year,
-        y: lines_value[1],
-        name: lines_legend[1],
-        type: "scatter"
+    var config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                title: {
+                    display: true,
+                    text: `${param} of ${country}`,
+                    font: {
+                        size: 20
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Year',
+                        font: {
+                            size: 20
+                        }
+                    },
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Tons',
+                        font: {
+                            size: 20
+                        }
+                    }
+                }
+            }
+        }
     };
-    var trace2 = {
-        x: lines_year,
-        y: lines_value[2],
-        name: lines_legend[2],
-        type: "scatter"
-    };
-    var trace3 = {
-        x: lines_year,
-        y: lines_value[3],
-        name: lines_legend[3],
-        type: "scatter"
-    };
-    var data = [trace0, trace1, trace2, trace3];
-    var layout = {
-        title: `<b> ${param} of ${country}</b>`,
-        yaxis: {title: 'Tons'}
-    };
-    Plotly.newPlot("line", data, layout);
-
+    myChart = new Chart(ctx,
+        config
+    );
 
 });
 
@@ -168,37 +193,83 @@ function optionChanged() {
         }
     };
     //redraw
-    var trace0 = {
-        x: lines_year,
-        y: lines_value[0],
-        name: lines_legend[0],
-        type: "scatter"
+    myChart.destroy();
+    var labels = lines_year;
+    var data = {
+        labels: labels,
+        datasets: [{
+            label: lines_legend[0],
+            data: lines_value[0],
+            fill: false,
+            borderColor: 'rgb(255, 60, 60)',
+            tension: 0.1
+        },
+        {
+            label: lines_legend[1],
+            data: lines_value[1],
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+        },
+        {
+            label: lines_legend[2],
+            data: lines_value[2],
+            fill: false,
+            borderColor: 'rgb(75, 192, 45)',
+            tension: 0.1
+        },
+        {
+            label: lines_legend[3],
+            data: lines_value[3],
+            fill: false,
+            borderColor: 'rgb(150, 120, 240)',
+            tension: 0.1
+        }
+        ]
     };
-    var trace1 = {
-        x: lines_year,
-        y: lines_value[1],
-        name: lines_legend[1],
-        type: "scatter"
+    var config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                title: {
+                    display: true,
+                    text: `${param} of ${country}`,
+                    font: {
+                        size: 20
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Year',
+                        font: {
+                            size: 20
+                        }
+                    },
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Tons',
+                        font: {
+                            size: 20
+                        }
+                    }
+                }
+            }
+        }
     };
-    var trace2 = {
-        x: lines_year,
-        y: lines_value[2],
-        name: lines_legend[2],
-        type: "scatter"
-    };
-    var trace3 = {
-        x: lines_year,
-        y: lines_value[3],
-        name: lines_legend[3],
-        type: "scatter"
-    };
-    var data = [trace0, trace1, trace2, trace3];
-    var layout = {
-        title: `<b> ${param} of ${country}</b>`,
-        yaxis: {title: 'Tons'}
-    };
-    //redraw plot bar
-    Plotly.react("line", data, layout);
+    myChart = new Chart(ctx,
+        config
+    );
+
 };
 
 // update per parameters chosen
@@ -251,37 +322,84 @@ function radioChanged() {
 
         }
     };
-
     //redraw
-    var trace0 = {
-        x: lines_year,
-        y: lines_value[0],
-        name: lines_legend[0],
-        type: "scatter"
+
+    myChart.destroy();
+    var labels = lines_year;
+    var data = {
+        labels: labels,
+        datasets: [{
+            label: lines_legend[0],
+            data: lines_value[0],
+            fill: false,
+            borderColor: 'rgb(255, 60, 60)',
+            tension: 0.1
+        },
+        {
+            label: lines_legend[1],
+            data: lines_value[1],
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+        },
+        {
+            label: lines_legend[2],
+            data: lines_value[2],
+            fill: false,
+            borderColor: 'rgb(75, 192, 45)',
+            tension: 0.1
+        },
+        {
+            label: lines_legend[3],
+            data: lines_value[3],
+            fill: false,
+            borderColor: 'rgb(150, 120, 240)',
+            tension: 0.1
+        }
+        ]
     };
-    var trace1 = {
-        x: lines_year,
-        y: lines_value[1],
-        name: lines_legend[1],
-        type: "scatter"
+    var config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                title: {
+                    display: true,
+                    text: `${param} of ${country}`,
+                    font: {
+                        size: 20
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Year',
+                        font: {
+                            size: 20
+                        }
+                    },
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Tons',
+                        font: {
+                            size: 20
+                        }
+                    }
+                }
+            }
+        }
     };
-    var trace2 = {
-        x: lines_year,
-        y: lines_value[2],
-        name: lines_legend[2],
-        type: "scatter"
-    };
-    var trace3 = {
-        x: lines_year,
-        y: lines_value[3],
-        name: lines_legend[3],
-        type: "scatter"
-    };
-    var data = [trace0, trace1, trace2, trace3];
-    var layout = {
-        title: `<b> ${param} of ${country}</b>`,
-        yaxis: {title: 'Tons'}
-    };
-    //redraw plot bar
-    Plotly.react("line", data, layout);
+    myChart = new Chart(ctx,
+        config
+    );
+
 };
+
