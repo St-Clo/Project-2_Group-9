@@ -239,7 +239,38 @@ d3.json(url).then(function (csvData) {
         }
     };
     var config = { responsive: true }
-    Plotly.react("bar", data, layout, config);
+    Plotly.newPlot("bar", data, layout, config);
+
+    var map_countries = items.map(x => x[0]);
+    var map_data = items.map(x => x[1]);
+
+
+    var mdata = [{
+        type: 'choropleth',
+        locationmode: 'country names',
+        locations: map_countries,
+        z: map_data,
+        text: map_countries,
+        autocolorscale: true
+    }];
+
+    var mlayout = {
+        title: `${cat} Worldwide in ${year_ids[0]}`,
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 70,
+            pad: 2
+        },
+        geo: {
+            projection: {
+                type: 'robinson'
+            }
+        }
+    };
+
+    Plotly.newPlot("mymap", mdata, mlayout);
 
 });
 
@@ -559,7 +590,39 @@ function yearChanged() {
         }
     };
     var config = { responsive: true }
-    Plotly.react("bar", data, layout, config);
+    Plotly.newPlot("bar", data, layout, config);
+
+
+    var map_countries = items.map(x => x[0]);
+    var map_data = items.map(x => x[1]);
+
+
+    var mdata = [{
+        type: 'choropleth',
+        locationmode: 'country names',
+        locations: map_countries,
+        z: map_data,
+        text: map_countries,
+        autocolorscale: true
+    }];
+
+    var mlayout = {
+        title: `${cat} Worldwide in ${year}`,
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 70,
+            pad: 2
+        },
+        geo: {
+            projection: {
+                type: 'robinson'
+            }
+        }
+    };
+
+    Plotly.newPlot("mymap", mdata, mlayout);
 };
 
 
@@ -620,5 +683,38 @@ function categoryChanged() {
         }
     };
     var config = { responsive: true }
-    Plotly.react("bar", data, layout, config);
+    Plotly.newPlot("bar", data, layout, config);
+
+
+    var map_countries = items.map(x => x[0]);
+    var map_data = items.map(x => x[1]);
+    console.log(map_countries);
+    console.log(map_data);
+
+    var mdata = [{
+        type: 'choropleth',
+        locationmode: 'country names',
+        locations: map_countries,
+        z: map_data,
+        text: map_countries,
+        autocolorscale: true
+    }];
+
+    var mlayout = {
+        title: `${cat} Worldwide in ${year}`,
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 70,
+            pad: 2
+        },
+        geo: {
+            projection: {
+                type: 'robinson'
+            }
+        }
+    };
+
+    Plotly.newPlot("mymap", mdata, mlayout);
 };
